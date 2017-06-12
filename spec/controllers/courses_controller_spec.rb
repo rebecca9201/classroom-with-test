@@ -105,4 +105,77 @@ RSpec.describe CoursesController do
     end
   end
 
+
+  describe "PUT update" do
+    context "when course has title" do
+      it "assigns @course" do
+        course = create(:course)
+
+        put :update, params: { id: course.id, course: { title: "Title", description: "Description" } }
+
+        expect(assigns[:course]).to eq(course)
+      end
+
+      it "changes value" do
+        course = create(:course)
+
+        put :update, params: { id: course.id, course: { title: "Title", description: "Description" } }
+
+        expect(assigns[:course].title).to eq("Title")
+        expect(assigns[:course].description).to eq("Description")
+      end
+
+      it "redirects to course_path" do
+        course = create(:course)
+
+        put :update, params: { id: course.id, course: { title: "Title", description: "Description" } }
+
+        expect(response).to redirect_to course_path(course)
+      end
+    end
+
+    context "when course doesn't have title " do
+      it "doesn't update a record " do
+        course = create(:course)
+
+        put :update, params: { id: course.id, course: { title: "", description: "Description" } }
+
+        expect(course.description).not_to eq("Description")
+      end
+
+      it "renders edit template" do
+        course = create(:course)
+
+        put :update, params: { id: course.id, course: { title: "", description: "Description" } }
+
+        expect(response).to render_template("edit")
+      end
+    end
+
+    describe "DELETE destroy" do
+      it "assigns @course" do
+        course = create(:course)
+
+        delete :destroy, id: course.id
+
+        expect(assigns[:course]).to eq(course)
+      end
+
+      it "deletes a record" do
+        course = create(:course)
+
+        expect { delete :destroy, id: course.id }.to change { Course.count }.by(-1)
+      end
+
+      it "redirects to courses_path" do
+        course = create(:course)
+
+        delete :destroy, id: course.id
+
+        expect(response).to redirect_to courses_path
+      end
+    end
+
+  end
+
 end
