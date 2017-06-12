@@ -217,26 +217,40 @@ end
 
 
   describe "DELETE destroy" do
-    it "assigns @course" do
-      course = create(:course)
+    let(:author) { create(:user) }
+    let(:not_author) { create(:user) }
 
-      delete :destroy, id: course.id
-
-      expect(assigns[:course]).to eq(course)
+    before do
+      @course = create(:course, user: author)
     end
 
-    it "deletes a record" do
-      course = create(:course)
+    context "when sign in as author" do
+      before { sign_in author }
 
-      expect { delete :destroy, id: course.id }.to change { Course.count }.by(-1)
-    end
+      it "assigns @course" do
+        delete :destroy, params: { id: @course.id }
+        expect(assigns[:course]).to eq(@course)
+      end
 
-    it "redirects to courses_path" do
-      course = create(:course)
+      it "deletes a record" do
+        expect { delete :destroy, params: { id: @course.id } }.to change { Course.count }.by(-1)
+      end
 
-      delete :destroy, id: course.id
+      it "redirects to courses_path" do
+        delete :destroy, params: { id: @course.id }
+        expect(response).to redirect_to courses_path
+      end
+     end
 
-      expect(response).to redirect_to courses_path
+    context "when sign in not as author" do
+      before { sign_in not_author }
+      it "raises an error" do
+
+
+        expect do
+          delete :destroy, params: { id: @course.id }
+        end.to raise_error ActiveRecord::RecordNotFound
+      end
     end
   end
 end
