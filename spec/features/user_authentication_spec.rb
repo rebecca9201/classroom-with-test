@@ -1,29 +1,22 @@
 require "rails_helper"
 
-describe "user sign in", :type => :feature do
+describe "user sign in and sign out", :type => :feature do
   before :each do
-    User.create(:email => "user@example.com", :password => "password")
+    @user = User.create(:email => "user@example.com", :password => "password")
   end
 
   it "sign_in the user" do
-    new_session_page.sign_in "user@example.com", "password"
+    new_session_page.sign_in("user@example.com", "password")
 
     expect(page).to have_content "user@example.com"
   end
 
 
-  scenario "user signs out" do
-    
-    visit "/users/sign_in"
+  it "user signs out" do
 
-    within(".new_user") do
-      fill_in "Email", with: "user@example.com"
-      fill_in "Password", with: "password"
-    end
+    new_session_page.sign_in("user@example.com", "password")
 
-    click_button "Log in"
-
-    click_link "Logout"
+    navbar.sign_out @user.email
 
     expect(page).not_to have_text "user@example.com"
   end
