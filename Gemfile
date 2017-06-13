@@ -47,6 +47,7 @@ group :development, :test do
   gem "shoulda-matchers", "~> 3.1.1"
   gem 'capybara', '~> 2.11.0'
   gem "database_rewinder"
+  gem "formulaic"
 end
 
 group :development do
